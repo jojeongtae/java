@@ -1,7 +1,6 @@
 public class Cart {
     private CartItem[] mCart = new CartItem[3];
     private int mCartItemCount = 0;
-    private int mCartListCount = 0;
     public boolean isCartInBook(String bookId) {
         for (int i = 0; i < mCartItemCount; i++) {
             if (bookId.equals(mCart[i].getBook().getId())) {
@@ -17,14 +16,23 @@ public class Cart {
         for (int i = 0 ;i<this.mCartItemCount ;i++){
             if (bookId.equals(this.mCart[i].getBook().getId())){
                 this.mCart[i].setCount(this.mCart[i].getCount()+1);
-                mCartListCount++;
             }
         }
     }
-    public void cartInbookList(){
-        for (int i =0 ;i<mCartItemCount ;i++){
-
-        }
+    public void clearCart(){
+        mCartItemCount = 0;
     }
-
+    public void removeCartItem(int count){
+        for(int i = 0 ;i<mCartItemCount ;i++){
+            mCart[i] = mCart[i+1];
+        }
+        mCart[mCartItemCount-1] = null;
+        mCartItemCount--;
+    }
+    public int getmCartItemCount(){
+        return mCartItemCount;
+    }
+    public CartItem[] getCartItems(){
+        return mCart;
+    }
 }
