@@ -1,3 +1,4 @@
+import java.util.Date;
 import java.util.Scanner;
 
 public class BookMarketManager {
@@ -7,7 +8,7 @@ public class BookMarketManager {
     public BookMarketManager() {
         this.mBook[0] = new Book("ISBN1234", "쉽게 배우는 JSP 웹프로그래밍", 27000, "송미영", "단계별로 쇼핑몰을 구현하며 배우는 JSP 웹프로그래밍 ", "IT전문서", "2018/10/08");
         this.mBook[1] = new Book("ISBN1235", "안드로이드 프로그래밍", 33000, "우재남", "실습 단계별 명쾌한 멘토링! ", "IT전문서", "2022/01/22");
-        this.mBook[2] = new Book("ISBN1235", "스크래치", 22000, "고광일", "컴퓨팅 사고력을 키우는 블록 코딩", "컴퓨터 입문", "2019/06/10");
+        this.mBook[2] = new Book("ISBN1236", "스크래치", 22000, "고광일", "컴퓨팅 사고력을 키우는 블록 코딩", "컴퓨터 입문", "2019/06/10");
     }
 
     public void run() {
@@ -78,15 +79,7 @@ public class BookMarketManager {
 
     public void menuCartItemList() {
         System.out.println("장바구니 상품 목록 보기");
-        System.out.println("-----------------------------------------------");
-        System.out.println("도서 ID \t |수량\t|총가격");
-        for (int i = 0; i < mCart.getmCartItemCount(); i++) {
-            CartItem item = mCart.getCartItems()[i];
-            Book book = item.getBook();
-            System.out.println((i + 1) + " " + book.getId() + "| " + item.getCount() + "\t |" + item.getTotalPrice());
-        }
-        System.out.println("-----------------------------------------------");
-
+        mCart.printCart();
     }
 
     public void menuCartClear() {
@@ -94,8 +87,8 @@ public class BookMarketManager {
         System.out.print("현재 담긴 장바구니 목록을 전부 비우시겠습니까? Y/N");
         Scanner input = new Scanner(System.in);
         String yn = input.nextLine();
-        if (yn.toUpperCase().equals("Y")){
-                mCart.clearCart();
+        if (yn.toUpperCase().equals("Y")) {
+            mCart.clearCart();
 
         }
     }
@@ -156,51 +149,56 @@ public class BookMarketManager {
 
     public void menuCartRemoveItemCount() {
         System.out.println("장바구니에 항목 수량 줄이기");
-        System.out.println("장바구니 상품 목록 보기");
-        System.out.println("-----------------------------------------------");
-        System.out.println("도서 ID \t |수량\t|총가격");
-        for (int i = 0; i < mCart.getmCartItemCount(); i++) {
-            CartItem item = mCart.getCartItems()[i];
-            Book book = item.getBook();
-            System.out.println((i + 1) + book.getId() + "| " + item.getCount() + "\t |" + item.getTotalPrice());
+        while (true) {
+            this.mCart.printCart();
+            System.out.print("수량을 줄이실 도서ID를 입력하세요");
+            Scanner input = new Scanner(System.in);
+            String bookId = input.nextLine();
+            if (!this.mCart.isCartInBook(bookId)){
+                System.out.println("장바구니에 없습니다");
+                continue;
+            }
+            System.out.println(bookId + "의 수량을 줄이시겠습니까? Y/N");
+            String yn = input.nextLine();
+            if (yn.toUpperCase().equals("Y")) {
+                Book book = this.mCart.deCreaseBookCount(bookId);
+                System.out.println(book.getTitle() + " 한권이 장바구니에서 삭제되었습니다");
+                break;
+            }
+            break;
         }
-        System.out.println("-----------------------------------------------");
-        System.out.print("수량을 줄이실 도서ID를 입력하세요");
+
+    }
+
+
+
+public void menuCartRemoveItem() {
+    System.out.println("장바구니의 항목 삭제하기");
+    while (true) {
+        this.mCart.printCart();
+        System.out.println("수량을 삭제할 도서ID를 입력하세요");
         Scanner input = new Scanner(System.in);
         String bookId = input.nextLine();
-        System.out.print(bookId + "의 수량을 줄이시겠습니까? Y/N");
+        if (!this.mCart.isCartInBook(bookId)){
+            System.out.println("장바구니에 없습니다");
+            continue;
+        }
+        System.out.println(bookId + "의 수량을 삭제하시겠습니까? Y/N");
         String yn = input.nextLine();
         if (yn.toUpperCase().equals("Y")) {
-            boolean flag = false;
-            for (int i = 0; i < mCart.getmCartItemCount(); i++) {
-                CartItem cartItem = mCart.getCartItems()[i];
-                if (cartItem.getBook().getId().equals(bookId)) {
-                    int count = cartItem.getCount();
-                    flag =true;
-                    if (count > 1) {
-                        cartItem.setCount(count - 1);
-                        System.out.println("상품의 수량이 줄어 들었습니다.");
-                    } else {
-                        mCart.removeCartItem(i);
-                        System.out.println("수량이 없어서 삭제 되었습니다.");
-                    }
-                    break;
-                }
-
-            }
-        if (!flag){
-            System.out.println("도서가 없습니다.");
+            Book book =mCart.removeCartItem(bookId);
+             System.out.println(book.getTitle() +" 삭제완료");
+            break;
         }
-        }
-
+        break;
     }
 
-    public void menuCartRemoveItem() {
-        System.out.println("장바구니의 항목 삭제하기");
-    }
+}
 
-    public void menuCartBill() {
-        System.out.println("영수증 표시하기");
+public void menuCartBill() {
+        //가격 날짜 책정보 등등
+    System.out.println("영수증 표시하기");
+    System.out.println(mCart.cartBill());
     }
 
 }
