@@ -1,28 +1,28 @@
-public class Cart {
+public class Cart implements CartInterface{
     private CartItem[] mCart = new CartItem[3];
     private int mCartItemCount = 0;
-
-    public boolean isCartInBook(String bookId) {
+@Override
+    public boolean isCartInItem(String bookId) {
         for (int i = 0; i < mCartItemCount; i++) {
-            if (bookId.equals(mCart[i].getBook().getId())) {
+            if (bookId.equals(mCart[i].getBook().getItemId())) {
                 return true;
             }
         }
         return false;
     }
-
-    public void appendBook(Book book) {
-        this.mCart[this.mCartItemCount++] = new CartItem(book);
+    @Override
+    public void appendItem(Item book) {
+        this.mCart[this.mCartItemCount++] = new CartItem((Book) book); //다운 캐스팅
     }
-
-    public void inCreaseBookCount(String bookId) {
+@Override
+    public void inCreaseItemCount(String bookId) {
         for (int i = 0; i < this.mCartItemCount; i++) {
-            if (bookId.equals(this.mCart[i].getBook().getId())) {
+            if (bookId.equals(this.mCart[i].getBook().getItemId())) {
                 this.mCart[i].setCount(this.mCart[i].getCount() + 1);
             }
         }
     }
-
+    @Override
     public void clearCart() {
 //        for (int i = 0; i < this.mCartItemCount; i++) {
 //            mCart[i] = null;
@@ -30,11 +30,11 @@ public class Cart {
         this.mCart = new CartItem[3];
         mCartItemCount = 0;
     }
-
-    public Book deCreaseBookCount(String bookId) {
+@Override
+    public Item deCreaseItemCount(String bookId) {
         Book book = null;  //지역변수는 초기 값을 null이라도 안넣어주면 안에 뭐가 들어있는지 알 수 없음
         for (int i = 0; i < this.mCartItemCount; i++) {
-            if (this.mCart[i].getBook().getId().equals(bookId)) {
+            if (this.mCart[i].getBook().getItemId().equals(bookId)) {
                 this.mCart[i].setCount(this.mCart[i].getCount() - 1);
                 book = this.mCart[i].getBook(); //여기에 getId하면 안됨 물어보기
                 if (this.mCart[i].getCount() == 0) {
@@ -46,7 +46,8 @@ public class Cart {
         }
         return book;
     }
-    private void removeCartItem(int index){
+@Override
+    public void removeCartItem(int index){
         for (int i =index;i<this.mCartItemCount-1 ;i++){
             this.mCart[i] = this.mCart[i+1];
         }
@@ -63,10 +64,11 @@ public class Cart {
 //    this.mCart = newCartItemList;
 //    this.mCartItemCount--;
     }
-    public Book removeCartItem(String bookId){
+    @Override
+    public Item removeCartItem(String bookId){
         Book book = null;
         for (int i =0 ;i<mCartItemCount ;i++){
-            if (bookId.equals(mCart[i].getBook().getId())){
+            if (bookId.equals(mCart[i].getBook().getItemId())){
                book = mCart[i].getBook();
                 removeCartItem(i);
 
@@ -74,11 +76,12 @@ public class Cart {
         }
         return book;
     }
+    @Override
     public void printCart(){
         System.out.println("-----------------------------------------------");
         System.out.println("도서 ID \t |수량\t|총가격");
         for (int i = 0; i < mCartItemCount; i++) {
-            System.out.print((i+1)+" "+ this.mCart[i].getBook().getId()+"\t |");
+            System.out.print((i+1)+" "+ this.mCart[i].getBook().getItemId()+"\t |");
             System.out.println(this.mCart[i].getCount()+"\t |"+this.mCart[i].getTotalPrice());
         }
         System.out.println("-----------------------------------------------");
